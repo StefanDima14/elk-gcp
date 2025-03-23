@@ -1,0 +1,17 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: {{ .Values.elasticsearch.clusterName }}
+spec:
+  version: {{ .Values.elasticsearch.version }}
+  nodeSets:
+    - name: default
+      count: {{ .Values.elasticsearch.replicas }}
+      config:
+        node.roles: ["master", "data", "ingest"]
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                {{- toYaml .Values.elasticsearch.resources | nindent 16 }}

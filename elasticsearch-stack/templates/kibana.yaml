@@ -1,0 +1,17 @@
+{{- if .Values.kibana.enabled }}
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+spec:
+  version: {{ .Values.kibana.version }}
+  count: 1
+  elasticsearchRef:
+    name: {{ .Values.elasticsearch.clusterName }}
+  podTemplate:
+    spec:
+      containers:
+        - name: kibana
+          resources:
+            {{- toYaml .Values.kibana.resources | nindent 12 }}
+{{- end }}

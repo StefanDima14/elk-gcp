@@ -1,0 +1,48 @@
+{{- if .Values.logstash.enabled }}
+apiVersion: logstash.k8s.elastic.co/v1
+kind: Logstash
+metadata:
+  name: logstash
+spec:
+  version: {{ .Values.logstash.version }}
+  count: {{ .Values.logstash.replicas }}
+  elasticsearchRef:
+    name: {{ .Values.elasticsearch.clusterName }}
+  podTemplate:
+    spec:
+      containers:
+        - name: logstash
+          resources:
+            {{- toYaml .Values.logstash.resources | nindent 12 }}
+          volumeMounts:
+            - name: logstash-config
+              mountPath: /usr/share/logstash/pipeline/logstash.conf
+              subPath: logstash.conf
+      volumes:
+        - name: logstash-config
+          configMap:
+            name: logstash-config
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: logstash-config
+data:
+  logstash.conf: |
+    input {
+      http {
+        port => 5044
+      }
+    }
+    filter {
+      json {
+        source => "message"
+      }
+    }
+    output {
+      elasticsearch {
+        hosts => ["http://{{ .Values.elasticsearch.clusterName }}-es-http:9200"]
+        index => "iot-data-%{+YYYY.MM.dd}"
+      }
+    }
+{{- end }}

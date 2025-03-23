@@ -1,0 +1,46 @@
+---
+# Source: eck-elasticsearch-stack/templates/elasticsearch.yaml
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: iot-cluster
+spec:
+  version: 8.17.1
+  nodeSets:
+    - name: default
+      count: 3
+      config:
+        node.roles: ["master", "data", "ingest"]
+      podTemplate:
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                limits:
+                  cpu: 800m
+                  memory: 1Gi
+                requests:
+                  cpu: 500m
+                  memory: 500Mi
+---
+# Source: eck-elasticsearch-stack/templates/kibana.yaml
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+spec:
+  version: 8.17.1
+  count: 1
+  elasticsearchRef:
+    name: iot-cluster
+  podTemplate:
+    spec:
+      containers:
+        - name: kibana
+          resources:
+            limits:
+              cpu: 500m
+              memory: 1Gi
+            requests:
+              cpu: 250m
+              memory: 512Mi

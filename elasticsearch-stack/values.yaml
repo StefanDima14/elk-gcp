@@ -1,0 +1,37 @@
+# Elasticsearch Configuration
+elasticsearch:
+  clusterName: "iot-cluster"
+  version: "8.17.1"
+  replicas: 3
+  resources:
+    requests:
+      memory: "500Mi"
+      cpu: "500m"
+    limits:
+      memory: "1Gi"
+      cpu: "800m"
+
+# Kibana Configuration
+kibana:
+  enabled: true
+  version: "8.17.1"
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
+
+# Logstash Configuration
+logstash:
+  enabled: false
+  version: "8.17.1"
+  replicas: 1
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "250m"
+    limits:
+      memory: "1Gi"
+      cpu: "500m"
