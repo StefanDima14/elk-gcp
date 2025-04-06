@@ -1,0 +1,52 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: elasticsearch
+  namespace: elasticsearch
+spec:
+  chart:
+    spec:
+      chart: ./elasticsearch-stack/elasticsearch
+      sourceRef:
+        kind: GitRepository
+        name: https://github.com/StefanDima14/elk-gcp.git
+        namespace: flux-system
+      interval: 1m
+  values:
+    # Elasticsearch Configuration
+    elasticsearch:
+      clusterName: "iot-cluster"
+      version: "8.17.1"
+      replicas: 3
+      resources:
+        requests:
+          memory: "500Mi"
+          cpu: "500m"
+        limits:
+          memory: "1Gi"
+          cpu: "800m"
+
+    # Kibana Configuration
+    kibana:
+      enabled: true
+      version: "8.17.1"
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "250m"
+        limits:
+          memory: "1Gi"
+          cpu: "500m"
+
+    # Logstash Configuration
+    logstash:
+      enabled: false
+      version: "8.17.1"
+      replicas: 1
+      resources:
+        requests:
+          memory: "512Mi"
+          cpu: "250m"
+        limits:
+          memory: "1Gi"
+          cpu: "500m"
